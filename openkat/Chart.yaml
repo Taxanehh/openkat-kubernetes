@@ -42,10 +42,6 @@ dependencies:
     alias: katalogus
     repository: file://../openkat-katalogus
     version: 0.1.0
-  - name: openkat-keiko
-    alias: keiko
-    repository: file://../openkat-keiko
-    version: 0.1.0
   - name: openkat-normalizer
     alias: normalizer
     repository: file://../openkat-normalizer

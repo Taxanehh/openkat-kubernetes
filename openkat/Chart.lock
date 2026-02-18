@@ -14,9 +14,6 @@ dependencies:
 - name: openkat-katalogus
   repository: file://../openkat-katalogus
   version: 0.1.0
-- name: openkat-keiko
-  repository: file://../openkat-keiko
-  version: 0.1.0
 - name: openkat-normalizer
   repository: file://../openkat-normalizer
   version: 0.1.0
