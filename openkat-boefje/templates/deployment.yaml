@@ -34,30 +34,17 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-            {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if eq (default "" .Values.runtime) "kubernetes" }}
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              sed -i 's/item_handler = DockerBoefjeHandler(scheduler_client, bytes_api_client)/item_handler = LocalBoefjeHandler(scheduler_client, bytes_api_client)/' /app/boefjes/boefjes/__main__.py
-              exec python -m boefjes boefje
-          {{- else }}
           {{- with .Values.args }}
           args:
             {{- toYaml . | nindent 12 }}
-          {{- end }}
           {{- end }}
           envFrom:
             - configMapRef:
                 name: {{ .Values.global.configMap.name }}
             - secretRef:
                 name: {{ .Values.global.secret.name }}
-          {{- with .Values.env }}
-          env:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -68,34 +55,13 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- if or .Values.dockerSocket.enabled .Values.volumeMounts }}
+          {{- with .Values.volumeMounts }}
           volumeMounts:
-            {{- if .Values.dockerSocket.enabled }}
-            {{- if .Values.dockerSocket.enabled }}
-            - name: docker-socket
-              mountPath: /var/run/docker.sock
-            {{- end }}
-            {{- with .Values.volumeMounts }}
-            {{- end }}
-            {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
-            {{- end }}
-      {{- if or .Values.dockerSocket.enabled .Values.volumes }}
+          {{- end }}
+      {{- with .Values.volumes }}
       volumes:
-        {{- if .Values.dockerSocket.enabled }}
-        {{- if .Values.dockerSocket.enabled }}
-        - name: docker-socket
-          hostPath:
-            path: /var/run/docker.sock
-            type: Socket
-        {{- end }}
-        {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
-        {{- end }}
-        {{- with .Values.volumes }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
