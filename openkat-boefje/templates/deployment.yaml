@@ -34,6 +34,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if eq (default "" .Values.runtime) "kubernetes" }}
@@ -67,10 +68,14 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- if or .Values.dockerSocket.enabled .Values.volumeMounts }}
           volumeMounts:
+            {{- if .Values.dockerSocket.enabled }}
             {{- if .Values.dockerSocket.enabled }}
             - name: docker-socket
               mountPath: /var/run/docker.sock
+            {{- end }}
+            {{- with .Values.volumeMounts }}
             {{- end }}
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
@@ -78,10 +83,15 @@ spec:
       {{- if or .Values.dockerSocket.enabled .Values.volumes }}
       volumes:
         {{- if .Values.dockerSocket.enabled }}
+        {{- if .Values.dockerSocket.enabled }}
         - name: docker-socket
           hostPath:
             path: /var/run/docker.sock
             type: Socket
+        {{- end }}
+        {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
         {{- end }}
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
