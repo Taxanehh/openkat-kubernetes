@@ -1,0 +1,30 @@
+global:
+  configMap:
+    name: openkat
+  secret:
+    name: openkat
+
+rabbitmq:
+  auth:
+    username: openkat
+    password: openkat
+    securePassword: false
+
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/rabbitmq
+    tag: 3.12.14-debian-11-r0
+
+rocky:
+  ingress:
+    enabled: true
+    className: traefik
+    hosts:
+      - host: openkat.127-0-0-1.nip.io
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - openkat.127-0-0-1.nip.io
+      secretName: openkat-rocky-tls
