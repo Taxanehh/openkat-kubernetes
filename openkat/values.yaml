@@ -3,6 +3,8 @@ global:
     name: openkat
   secret:
     name: openkat
+  security:
+    allowInsecureImages: true
 
 rabbitmq:
   auth:
