@@ -33,13 +33,20 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            runAsUser: 0
-            allowPrivilegeEscalation: true
+            {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if eq (default "" .Values.runtime) "kubernetes" }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              sed -i 's/item_handler = DockerBoefjeHandler(scheduler_client, bytes_api_client)/item_handler = LocalBoefjeHandler(scheduler_client, bytes_api_client)/' /app/boefjes/boefjes/__main__.py
+              exec python -m boefjes boefje
+          {{- else }}
           {{- with .Values.args }}
           args:
             {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- end }}
           envFrom:
             - configMapRef:
@@ -61,24 +68,24 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
+            {{- if .Values.dockerSocket.enabled }}
             - name: docker-socket
               mountPath: /var/run/docker.sock
-          {{- with .Values.volumeMounts }}
+            {{- end }}
+            {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            {{- end }}
+      {{- if or .Values.dockerSocket.enabled .Values.volumes }}
       volumes:
+        {{- if .Values.dockerSocket.enabled }}
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
+        {{- end }}
+        {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
-        - name: docker-socket
-          hostPath:
-            path: /var/run/docker.sock
-            type: Socket
-      {{- else }}
-      volumes:
-        - name: docker-socket
-          hostPath:
-            path: /var/run/docker.sock
-            type: Socket
+        {{- end }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

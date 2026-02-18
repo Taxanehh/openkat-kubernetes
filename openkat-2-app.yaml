@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openkat
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Taxanehh/openkat-kubernetes.git
+    targetRevision: main
+    path: openkat
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: openkat
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
