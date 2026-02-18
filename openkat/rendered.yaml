@@ -1045,7 +1045,7 @@ spec:
       enableServiceLinks: true
       initContainers:
         - name: prepare-plugins-dir
-          image: docker.io/bitnamilegacy/rabbitmq:3.12.14
+          image: docker.io/bitnamilegacy/rabbitmq:3.12.14-debian-11-r0
           imagePullPolicy: "IfNotPresent"
           resources:
             limits:
@@ -1085,7 +1085,7 @@ spec:
               mountPath: /emptydir
       containers:
         - name: rabbitmq
-          image: docker.io/bitnamilegacy/rabbitmq:3.12.14
+          image: docker.io/bitnamilegacy/rabbitmq:3.12.14-debian-11-r0
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false

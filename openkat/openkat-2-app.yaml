@@ -7,7 +7,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://gitea.nucs.me/paulus/openkat-kubernetes.git
+    repoURL: https://github.com/Taxanehh/openkat-kubernetes.git
     targetRevision: main
     path: openkat
 

@@ -13,7 +13,7 @@ rabbitmq:
   image:
     registry: docker.io
     repository: bitnamilegacy/rabbitmq
-    tag: 3.12.14
+    tag: "3.12.14"
 
 rocky:
   ingress:
