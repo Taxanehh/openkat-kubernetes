@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "openkat-boefje.fullname" . }}-runner
+  labels:
+    {{- include "openkat-boefje.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "openkat-boefje.fullname" . }}-runner
+subjects:
+- kind: ServiceAccount
+  name: {{ include "openkat-boefje.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
