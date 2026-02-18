@@ -17,6 +17,14 @@ rabbitmq:
     repository: bitnamilegacy/rabbitmq
     tag: "3.12.14"
 
+boefje:
+  runtime: kubernetes
+  dockerSocket:
+    enabled: false
+  env:
+    - name: BOEFJES_RUNTIME
+      value: kubernetes
+
 rocky:
   ingress:
     enabled: true

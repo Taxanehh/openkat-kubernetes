@@ -45,6 +45,10 @@ spec:
                 name: {{ .Values.global.configMap.name }}
             - secretRef:
                 name: {{ .Values.global.secret.name }}
+          {{- with .Values.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
