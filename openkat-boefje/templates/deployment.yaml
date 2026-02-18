@@ -33,10 +33,10 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            runAsUser: 0
-            allowPrivilegeEscalation: true
+            {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/bash", "/entrypoint/entrypoint.sh"]
           {{- with .Values.args }}
           args:
             {{- toYaml . | nindent 12 }}
@@ -61,25 +61,30 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
+            - name: entrypoint
+              mountPath: /entrypoint
+              readOnly: true
+            {{- if .Values.dockerSocket.enabled }}
             - name: docker-socket
               mountPath: /var/run/docker.sock
-          {{- with .Values.volumeMounts }}
+            {{- end }}
+            {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            {{- end }}
       volumes:
+        - name: entrypoint
+          configMap:
+            name: {{ include "openkat-boefje.fullname" . }}-entrypoint
+            defaultMode: 0755
+        {{- if .Values.dockerSocket.enabled }}
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
+        {{- end }}
+        {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
-        - name: docker-socket
-          hostPath:
-            path: /var/run/docker.sock
-            type: Socket
-      {{- else }}
-      volumes:
-        - name: docker-socket
-          hostPath:
-            path: /var/run/docker.sock
-            type: Socket
-      {{- end }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "openkat-boefje.fullname" . }}-entrypoint
+  labels:
+    {{- include "openkat-boefje.labels" . | nindent 4 }}
+data:
+  entrypoint.sh: |
+    #!/bin/bash
+    set -e
+
+    if [ "$BOEFJES_RUNTIME" = "kubernetes" ]; then
+      echo "[entrypoint] Patching boefje to use LocalBoefjeHandler (no Docker needed)"
+      sed -i 's/item_handler = DockerBoefjeHandler(scheduler_client, bytes_api_client)/item_handler = LocalBoefjeHandler(scheduler_client, bytes_api_client)/' /app/boefjes/boefjes/__main__.py
+    fi
+
+    exec python -m boefjes "$@"
