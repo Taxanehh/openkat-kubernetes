@@ -28,16 +28,14 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations: {}
+podAnnotations:
+  pod-security.kubernetes.io/enforce: privileged
 podLabels: {}
 
 podSecurityContext:
-  runAsNonRoot: true
   runAsUser: 1000
   runAsGroup: 1000
   fsGroup: 1000
-  seccompProfile:
-    type: RuntimeDefault
 
 securityContext:
   allowPrivilegeEscalation: false
