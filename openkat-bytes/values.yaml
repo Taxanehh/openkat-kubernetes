@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: docker.underdark.nl/librekat/openkat-bytes
+  repository: docker.underdark.nl/librekat/openkat-boefjes
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
