@@ -60,10 +60,8 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- if or .Values.dockerSocket.enabled .Values.volumeMounts }}
           volumeMounts:
-            - name: entrypoint
-              mountPath: /entrypoint
-              readOnly: true
             {{- if .Values.dockerSocket.enabled }}
             - name: docker-socket
               mountPath: /var/run/docker.sock
@@ -71,11 +69,9 @@ spec:
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+          {{- end }}
+      {{- if or .Values.dockerSocket.enabled .Values.volumes }}
       volumes:
-        - name: entrypoint
-          configMap:
-            name: {{ include "openkat-boefje.fullname" . }}-entrypoint
-            defaultMode: 0755
         {{- if .Values.dockerSocket.enabled }}
         - name: docker-socket
           hostPath:
@@ -85,6 +81,7 @@ spec:
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
