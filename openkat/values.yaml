@@ -24,6 +24,13 @@ boefje:
   env:
     - name: BOEFJES_RUNTIME
       value: kubernetes
+  extraEnv:
+    - name: BOEFJES_RUNTIME
+      value: kubernetes
+    - name: BOEFJES_DOCKER
+      value: "false"
+    - name: DOCKER_HOST
+      value: ""
 
 rocky:
   ingress:
